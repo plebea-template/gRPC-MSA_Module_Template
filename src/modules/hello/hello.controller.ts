@@ -14,7 +14,7 @@ import { HelloService } from "./hello.service";
 export class HelloController implements HelloServiceController {
   constructor(private readonly helloService: HelloService) {}
 
-  SayHello():
+  sayHello():
     | SayHelloResponse
     | Promise<SayHelloResponse>
     | Observable<SayHelloResponse> {

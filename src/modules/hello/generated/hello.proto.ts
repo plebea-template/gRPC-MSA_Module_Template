@@ -5,13 +5,13 @@
 // source: hello.proto
 
 /* eslint-disable */
-import { Observable } from "rxjs";
-
 import { GrpcMethod, GrpcStreamMethod } from "@nestjs/microservices";
+import { Observable } from "rxjs";
 
 export const protobufPackage = "hello";
 
-export interface SayHelloRequest {}
+export interface Empty {
+}
 
 export interface SayHelloResponse {
   message: string;
@@ -20,43 +20,24 @@ export interface SayHelloResponse {
 export const HELLO_PACKAGE_NAME = "hello";
 
 export interface HelloServiceClient {
-  SayHello(request: SayHelloRequest): Observable<SayHelloResponse>;
+  sayHello(request: Empty): Observable<SayHelloResponse>;
 }
 
 export interface HelloServiceController {
-  SayHello(
-    request: SayHelloRequest,
-  ):
-    | Promise<SayHelloResponse>
-    | Observable<SayHelloResponse>
-    | SayHelloResponse;
+  sayHello(request: Empty): Promise<SayHelloResponse> | Observable<SayHelloResponse> | SayHelloResponse;
 }
 
 export function HelloServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["SayHello"];
+    const grpcMethods: string[] = ["sayHello"];
     for (const method of grpcMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(
-        constructor.prototype,
-        method,
-      );
-      GrpcMethod("HelloService", method)(
-        constructor.prototype[method],
-        method,
-        descriptor,
-      );
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("HelloService", method)(constructor.prototype[method], method, descriptor);
     }
     const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
-      const descriptor: any = Reflect.getOwnPropertyDescriptor(
-        constructor.prototype,
-        method,
-      );
-      GrpcStreamMethod("HelloService", method)(
-        constructor.prototype[method],
-        method,
-        descriptor,
-      );
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("HelloService", method)(constructor.prototype[method], method, descriptor);
     }
   };
 }
